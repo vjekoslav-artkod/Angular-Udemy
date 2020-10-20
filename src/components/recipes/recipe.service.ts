@@ -6,9 +6,9 @@ import { Recipe } from './recipe.model';
 
 @Injectable()
 export class RecipeService {
-recipesChanged = new Subject<Recipe[]>();
+  recipesChanged = new Subject<Recipe[]>();
 
-  private recipes: Recipe[] = [
+  /* private recipes: Recipe[] = [
     new Recipe(
       'Tasty Schnitzel',
       'A super tasty schnitzel',
@@ -21,7 +21,9 @@ recipesChanged = new Subject<Recipe[]>();
       'https://dobartek.spar.hr/files/g/1-56/700x390-4/Skampi-na-buzaru_02.jpg',
       [new Ingredient('škampi', 4), new Ingredient('pecivo', 2)]
     ),
-  ];
+  ]; */
+
+  private recipes : Recipe[] = []; 
 
   constructor(private shoppingListService: ShoppingService) {}
 
@@ -40,7 +42,6 @@ recipesChanged = new Subject<Recipe[]>();
   addRecipe(recipe: Recipe) {
     this.recipes.push(recipe);
     this.recipesChanged.next(this.recipes.slice());
-
   }
 
   updateRecipe(index: number, newRecipe: Recipe) {
@@ -48,8 +49,13 @@ recipesChanged = new Subject<Recipe[]>();
     this.recipesChanged.next(this.recipes.slice());
   }
 
-  deleteRecipe(index : number) {
+  deleteRecipe(index: number) {
     this.recipes.splice(index, 1);
+    this.recipesChanged.next(this.recipes.slice());
+  }
+
+  setRecipes(recipes: Recipe[]) {
+    this.recipes = recipes;
     this.recipesChanged.next(this.recipes.slice());
   }
 }
