@@ -4,6 +4,7 @@ import { catchError, tap } from 'rxjs/operators';
 import { Subject, throwError, BehaviorSubject } from 'rxjs';
 import { User } from './user.model';
 import { Router } from '@angular/router';
+import { environment } from '../../environments/environment';
 
 export interface AuthResponseData {
   kind: string;
@@ -19,7 +20,6 @@ export interface AuthResponseData {
   providedIn: 'root',
 })
 export class AuthService {
-  API_KEY: string = 'AIzaSyAOYM7OkduPoMeh5TRYvVpRXfVCtPtQdGs';
   user = new BehaviorSubject<User>(null);
   private tokenExpiratonTimer: any;
 
@@ -28,7 +28,8 @@ export class AuthService {
   signup(email: string, password: string) {
     return this.http
       .post<AuthResponseData>(
-        `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${this.API_KEY}`,
+        `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=` +
+          environment.apiKey,
         { email: email, password: password, returnSecureToken: true }
       )
       .pipe(
@@ -47,7 +48,8 @@ export class AuthService {
   login(email: string, password: string) {
     return this.http
       .post<AuthResponseData>(
-        `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${this.API_KEY}`,
+        `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=` +
+          environment.apiKey,
         { email: email, password: password, returnSecureToken: true }
       )
       .pipe(
@@ -73,7 +75,7 @@ export class AuthService {
     const user = new User(email, userId, token, expirationDate);
     console.log(JSON.stringify(user), 'usereeeerr');
     this.user.next(user);
-    this.autoLogout(expiresIn * 1000);
+    /* this.autoLogout(expiresIn * 1000); */
     localStorage.setItem('userData', JSON.stringify(user));
   }
 
@@ -87,13 +89,13 @@ export class AuthService {
     this.tokenExpiratonTimer = null;
   }
 
-  autoLogout(expirationDate: number) {
+ /*  autoLogout(expirationDate: number) {
     console.log(expirationDate, 'vrijendosst za expiration date');
     this.tokenExpiratonTimer = setTimeout(() => {
       console.log('ovo je izvršeni');
       this.logout();
     }, expirationDate);
-  }
+  } */
 
   autoLogin() {
     const userData: {
@@ -117,10 +119,10 @@ export class AuthService {
       console.log(userData._tokenExpirationDate, 'vrijeme');
 
       const expirationDuration =
-        new Date(userData._tokenExpirationDate).getTime()  -
+        new Date(userData._tokenExpirationDate).getTime() -
         new Date().getTime();
       console.log(expirationDuration);
-      this.autoLogout(expirationDuration);
+      /* this.autoLogout(expirationDuration); */
     }
   }
 
